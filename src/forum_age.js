@@ -70,45 +70,43 @@ class Forum_Age {
 	}
 
 	static workout_age(){
-		let today = moment();
-		let start = moment([this.date.year, this.date.month - 1, this.date.day]);
-		let diff = 0;
+		let now = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+		let then = new Date(this.date.year, this.date.month - 1, this.date.day);
+		let diff = (now.getTime() - then.getTime());
 
-		let date_obj = {
+		let years = (now.getFullYear() - then.getFullYear());
+		let months = (now.getMonth() - then.getMonth());
+		let days = (now.getDate() - then.getDate());
 
-			days: 0,
-			months: 0,
-			years: 0
+		let days_in_month = [31, ((now.getFullYear() % 4)? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		let date_obj = {};
 
-		};
+		while(true){
+			date_obj = {};
+			date_obj.years = years;
+			date_obj.years_plural = (years != 1)? "s" : ""
 
-		// Years
+			if(months < 0){
+				years -= 1;
+				months += 12;
+				continue;
+			}
 
-		diff = today.diff(start, "years");
+			date_obj.months = months || "0";
+			date_obj.months_plural = (months != 1)? "s" : "";
 
-		start.add(diff, "years");
+			if(days < 0){
+				months -= 1;
+				days += days_in_month[((11 + now.getMonth()) % 12)];
+				continue;
+			}
 
-		date_obj.years = diff;
+			date_obj.days = days || "0";
+			date_obj.days_plural = (days != 1)? "s" : "";
+			break;
+		}
 
-		// Months
-
-		diff = today.diff(start, "months");
-
-		start.add(diff, "months");
-
-		date_obj.months = diff;
-
-		// Days
-
-		diff = today.diff(start, "days");
-
-		start.add(diff, "days");
-
-		date_obj.days = diff;
-
-		date_obj.days_plural = (date_obj.days != 1)? "s" : "";
-		date_obj.months_plural = (date_obj.months != 1)? "s" : "";
-		date_obj.years_plural = (date_obj.years != 1)? "s" : "";
+		date_obj.years = date_obj.years || "0";
 
 		let the_age = this.text;
 
